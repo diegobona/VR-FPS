@@ -1,4 +1,0 @@
-repository "Pico VRIF-Pico OpenXR Plugin@willchow@cloud.cn"
-  path "/"
-    br "/main"
-    co "/main"

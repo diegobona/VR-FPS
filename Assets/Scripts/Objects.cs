@@ -10,9 +10,10 @@ public class Objects : MonoBehaviour
     public void objectHitDamage(float amount)
     {
         objectHealth -= amount;
+        Debug.Log("¼õÑª"+amount);
         if (objectHealth <= 0f)
         {
-
+            Die();
         }
     }
 
