@@ -40,14 +40,12 @@ public class Rifle : MonoBehaviour
     {
 
       
-        Debug.Log("object currently held in lHand:" + lHandGrabber.HeldGrabbable);//返回的是VRIF的Grabbable类型，类似GameObject；但它更具体：可被抓取的。
-        Debug.Log("object currently held in rHand:" + rHandGrabber.HeldGrabbable);
-
         // 检测手正在握着的物体、以及Trigger按钮是否按下
         // HeldGrabbable是VRIF中定义的属性，指当前正被握着的物体
 
         if (lHandGrabber.HeldGrabbable != null)
         {
+            Debug.Log("object currently held in lHand:" + lHandGrabber.HeldGrabbable);//返回的是VRIF的Grabbable类型，类似GameObject；但它更具体：可被抓取的。
             if (lHandGrabber.HeldGrabbable.tag == "Gun" && InputBridge.Instance.LeftTriggerDown)
             {
                 if (checkBulletNum() > 0)
@@ -59,6 +57,7 @@ public class Rifle : MonoBehaviour
 
         if (rHandGrabber.HeldGrabbable != null)
         {
+            Debug.Log("object currently held in rHand:" + rHandGrabber.HeldGrabbable);
             if (rHandGrabber.HeldGrabbable.tag == "Gun" && InputBridge.Instance.RightTriggerDown)
             {
                 if (checkBulletNum() > 0)
@@ -100,7 +99,7 @@ public class Rifle : MonoBehaviour
 
         if (Physics.Raycast(rayStartPoint.position, rayStartPoint.forward, out hitInfo, shootingRange))
         {
-            //Debug.Log(hitInfo.transform.name);
+            Debug.Log("枪的raycast hit到的物体:"+hitInfo.transform.name);
 
             // 如果射线检测到碰撞，绘制一条红色的线
             Debug.DrawRay(rayStartPoint.position, rayStartPoint.forward* hitInfo.distance, Color.red);
@@ -125,15 +124,23 @@ public class Rifle : MonoBehaviour
                 Destroy(woodGo, 2f);
             }
 
-            Objects objects = hitInfo.transform.GetComponent<Objects>();//通过获取组件的方式，创建一个Objects.cs脚本的实例对象（脚本也是组件）
+            
+            Enemy enemy = hitInfo.transform.GetComponent<Enemy>();//获取击中的enemy的Enemy组件（脚本也属于组件）
 
-            if (objects != null)
+            if(enemy != null)
             {
-                //被射中的object（主要是人）减少生命值
-                objects.objectHitDamage(giveDamage);//调用Objects.cs脚本中的objectHitDamage方法
-
-
+                enemy.EnemyHitDamage(giveDamage);
             }
+
+
+            // Objects objects = hitInfo.transform.GetComponent<Objects>();//通过获取组件的方式，创建一个Objects.cs脚本的实例对象（脚本也是组件）
+
+            //if (objects != null)
+            //{
+            //    //被射中的object（主要是人）减少生命值
+            //    objects.objectHitDamage(giveDamage);//调用Objects.cs脚本中的objectHitDamage方法
+            //}
+
         }
 
        

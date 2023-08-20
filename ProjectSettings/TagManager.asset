@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Enemy
+  - RifleClip
+  - Gun
+  - Wood
+  - Metal
   layers:
   - Default
   - TransparentFX
@@ -13,13 +18,13 @@ TagManager:
   - UI
   - 
   - 
-  - Restricted
+  - Cover
+  - Ignore Shot
+  - Cover Invisible
   - Player
-  - Grabbable
-  - 
-  - 
-  - 
-  - 
+  - Enemy
+  - Bound
+  - Gun
   - 
   - 
   - 
