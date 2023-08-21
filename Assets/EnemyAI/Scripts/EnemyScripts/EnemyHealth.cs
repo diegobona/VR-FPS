@@ -50,50 +50,50 @@ namespace EnemyAI
 			weapon = weapon.parent;
 		}
 
-		// Receive damage from shots taken.
-		public override void TakeDamage(Vector3 location, Vector3 direction, float damage, Collider bodyPart, GameObject origin = null)
-		{
-			// Headshot multiplier. On default values, instantly kills NPC.
-			if (!dead && headshot && bodyPart.transform == anim.GetBoneTransform(HumanBodyBones.Head))
-			{
-				// Default damage multiplier is 10x.
-				damage *= 10;
-				// Call headshot HUD callback, if any.
-				GameObject.FindGameObjectWithTag("GameController").SendMessage("HeadShotCallback", SendMessageOptions.DontRequireReceiver);
-			}
+        // Receive damage from shots taken.
+        public override void TakeDamage(Vector3 location, Vector3 direction, float damage, Collider bodyPart, GameObject origin = null)
+        {
+            // Headshot multiplier. On default values, instantly kills NPC.
+            if (!dead && headshot && bodyPart.transform == anim.GetBoneTransform(HumanBodyBones.Head))
+            {
+                // Default damage multiplier is 10x.
+                damage *= 10;
+                // Call headshot HUD callback, if any.
+                GameObject.FindGameObjectWithTag("GameController").SendMessage("HeadShotCallback", SendMessageOptions.DontRequireReceiver);
+            }
 
-			// Create spouted blood particle on shot location.
-			Object.Instantiate<GameObject>(bloodSample, location, Quaternion.LookRotation(-direction), this.transform);
-			// Take damage received from current health.
-			health -= damage;
+            // Create spouted blood particle on shot location.
+            Object.Instantiate<GameObject>(bloodSample, location, Quaternion.LookRotation(-direction), this.transform);
+            // Take damage received from current health.
+            health -= damage;
 
-			// Is the NPC alive?
-			if (!dead)
-			{
-				// Trigger hit animation.
-				if(!anim.IsInTransition(3) && anim.GetCurrentAnimatorStateInfo(3).IsName("No hit"))
-					anim.SetTrigger("Hit");
-				// Show Health bar HUD.
-				healthUI.SetVisible();
-				UpdateHealthBar();
-				// Update FSM related references.
-				controller.variables.feelAlert = true;
-				controller.personalTarget = controller.aimTarget.position;
-			}
-			// Time to die.
-			if (health <= 0)
-			{
-				// Kill the NPC?
-				if (!dead)
-					Kill();
+            // Is the NPC alive?
+            if (!dead)
+            {
+                // Trigger hit animation.
+                if (!anim.IsInTransition(3) && anim.GetCurrentAnimatorStateInfo(3).IsName("No hit"))
+                    anim.SetTrigger("Hit");
+                // Show Health bar HUD.
+                healthUI.SetVisible();
+                UpdateHealthBar();
+                // Update FSM related references.
+                controller.variables.feelAlert = true;
+                controller.personalTarget = controller.aimTarget.position;
+            }
+            // Time to die.
+            if (health <= 0)
+            {
+                // Kill the NPC?
+                if (!dead)
+                    Kill();
 
-				// Shooting a dead body? Just apply shot force on the ragdoll part.
-				bodyPart.GetComponent<Rigidbody>().AddForce(100f * direction.normalized, ForceMode.Impulse);
-			}
-		}
+                // Shooting a dead body? Just apply shot force on the ragdoll part.
+                bodyPart.GetComponent<Rigidbody>().AddForce(100f * direction.normalized, ForceMode.Impulse);
+            }
+        }
 
-		// Remove unecessary components on killed NPC and set as dead.
-		public void Kill()
+        // Remove unecessary components on killed NPC and set as dead.
+        public void Kill()
 		{
 			// Destroy all other MonoBehaviour scripts attached to the NPC.
 			foreach (MonoBehaviour mb in this.GetComponents<MonoBehaviour>())
@@ -104,7 +104,7 @@ namespace EnemyAI
 			Destroy(this.GetComponent<NavMeshAgent>());
 			RemoveAllForces();
 			anim.enabled = false;
-			Destroy(weapon.gameObject);
+			//Destroy(weapon.gameObject);
 			Destroy(hud.gameObject);
 			dead = true;
 		}
@@ -123,7 +123,9 @@ namespace EnemyAI
 			foreach (Rigidbody member in GetComponentsInChildren<Rigidbody>())
 			{
 				member.isKinematic = false;
+				GetComponent<Rigidbody>().AddForce(-transform.forward * 300f);//我新增的
 				member.velocity = Vector3.zero;
+				
 			}
 		}
 	}

@@ -111,11 +111,37 @@ public class Rifle : MonoBehaviour
                 GameObject metalGo = Instantiate(metalEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
                 Destroy(metalGo, 2f);
             }
-            else if (hitInfo.transform.tag == "Enemy")
+            else if (hitInfo.transform.tag == "Enemy") //需要把子部位的tag都设为Enemy
             {
                 Debug.Log("hit a enemy!!!!!!!");
                 GameObject humanGo = Instantiate(humanEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
                 Destroy(humanGo, 2f);
+
+                Enemy enemy = hitInfo.transform.GetComponent<Enemy>();//获取击中的enemy的Enemy组件（脚本也属于组件）
+
+                if (enemy != null)
+                {
+                    enemy.EnemyHitDamage(giveDamage);
+                }
+                else //如果被击中的是敌人子部位，即不是enemy这个根物体，就获取不到Enemy脚本组件。这时要获取到根物体enemy！
+                {
+                    Transform currentObjectTransform = hitInfo.transform;
+                    Debug.Log("被hit中的具体物体是"+ currentObjectTransform);
+
+                    // 获取根物体（即enemy）
+                    Transform topObjectTransform = currentObjectTransform.root;
+                    Debug.Log("被hit中的具体物体的最上层物体是" + topObjectTransform);
+
+                    if (currentObjectTransform.name == "Head") 
+                    {
+                        topObjectTransform.GetComponent<Enemy>().EnemyHitDamage(giveDamage*2);//如果击中敌人头部，双倍伤害（一枪毙命；其他部位两枪）
+                    }
+                    else
+                    {
+                        topObjectTransform.GetComponent<Enemy>().EnemyHitDamage(giveDamage);
+                    }
+                    
+                }
             }
             else if (hitInfo.transform.tag == "Wood")
             {
@@ -125,12 +151,7 @@ public class Rifle : MonoBehaviour
             }
 
             
-            Enemy enemy = hitInfo.transform.GetComponent<Enemy>();//获取击中的enemy的Enemy组件（脚本也属于组件）
-
-            if(enemy != null)
-            {
-                enemy.EnemyHitDamage(giveDamage);
-            }
+      
 
 
             // Objects objects = hitInfo.transform.GetComponent<Objects>();//通过获取组件的方式，创建一个Objects.cs脚本的实例对象（脚本也是组件）
